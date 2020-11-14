@@ -2,7 +2,6 @@
 import os
 import random
 import sys
-# TODO: fix for months shorter than 31
 
 
 def input_int_in_range(range_min = 0, range_max = None, prompt = ""):
@@ -85,7 +84,7 @@ def color_of_date(date_tuple, width = terminal_width(), height = terminal_height
   then prints the resulting color all over the terminal.
   If optional parameters `width` or `height` are passed, it will print a block of that size.
   """
-  year_rs, month_rs, day_rs = map(reverse_string, date_tuple)  # _rs stands for reverse string
+  year_rs, month_rs, day_rs = map(reverse_string, date_tuple)
   rgb_values = tuple(map(int, (year_rs, month_rs, day_rs)))
   for line in range(height):
     print(rgb_text(rgb_values, block) * width)
