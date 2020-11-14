@@ -47,8 +47,6 @@ def format_tuple_as_str(tup, delimiter = ","):
   return str(tup).strip("(").replace(", ", delimiter).strip(")")
 
 
-
-
 def input_int_in_range(range_min = 0, range_max = None, prompt = ""):
   """
   Recursively request an input of a number between `range_min` and `range_max` (inclusive), with the optional input prompt of `prompt`.
@@ -63,29 +61,29 @@ def input_int_in_range(range_min = 0, range_max = None, prompt = ""):
     return input_int_in_range(range_min, range_max, prompt)
 
 
-def terminal_width():
-  """
-  Returns an integer of the terminal's current width.
-  """
-  return os.get_terminal_size()[0]
+class Terminal:
+  def width():
+    """
+    Returns an integer of the terminal's current width.
+    """
+    return os.get_terminal_size()[0]
 
-
-def terminal_height():
-  """
-  Returns an integer of the terminal's current height.
-  """
-  return os.get_terminal_size()[1]
+  def height():
+    """
+    Returns an integer of the terminal's current height.
+    """
+    return os.get_terminal_size()[1]
 
 
 def rgb_text(rgb_values, text):
   """
-  For input iterable `rgb_values`, returns a formatted string containing `text`.
+  For an input iterable `rgb_values`, of length 3, returns a formatted string containing `text`.
   """
   r, g, b = rgb_values
   return "\033[38;2;{};{};{}m{}\033[38;2;255;255;255m".format(r, g, b, text)
 
 
-def print_color_block(rgb_values, width = terminal_width(), height = terminal_height()):
+def print_color_block(rgb_values, width = Terminal.width(), height = Terminal.height()):
   """
   Given a tuple of RGB values, prints the resulting color all over the terminal.
   If optional parameters `width` or `height` are passed, it will print a block_char in the appropriate dimensions.
@@ -103,12 +101,12 @@ def cycle_century():
       for day in range(1, days_in_month(year, month) + 1):
         d = (day, month, year)
         c = color_of_date(d)
-        caption = format_tuple_as_str(d, delimiter = "/")
-        print(caption, end = "")
-        print_color_block(c, width = terminal_width() - len(caption), height = 1)
+        date_caption = format_tuple_as_str(d, delimiter = "/")
+        print(date_caption, end = "")
+        print_color_block(c, width = Terminal.width() - len(date_caption), height = 1)
 
 
-class Date():
+class Date:
   """
   Used for creating Date objects in the script.
   """
@@ -140,7 +138,7 @@ options = [
   "2 - Random date.",
   "q - Quit"
 ]
-option_labels = [option[0] for option in options]
+option_labels = [o[0] for o in options]
 block_char = chr(0x2588)  # the full block character: '█'.
 
 
@@ -151,8 +149,8 @@ def main():
   print(splash)
 
   while True:
-    for option in options:
-      print(option)
+    for o in options:
+      print(o)
 
     choice = input("Your choice: ")
     if not choice in option_labels:
@@ -164,16 +162,12 @@ def main():
       sys.exit(0)
     elif choice == "0":
       cycle_century()
-    elif choice == "1":
-      d = Date(user_input = True)
+    else:
+      d = Date(user_input = choice is "1")
       c = color_of_date(d.tuple())
       print_color_block(c)
-    elif choice == "2":
-      d = Date(user_input = False)
-      c = color_of_date(d.tuple())
-      print_color_block(c)
-      caption = format_tuple_as_str(d.tuple()[::-1], delimiter = "/")
-      print(caption)
+      date_caption = format_tuple_as_str(d.tuple()[::-1], delimiter = "/")
+      print(date_caption)
 
 if __name__ == '__main__':
   main()
