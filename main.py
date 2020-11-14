@@ -125,7 +125,7 @@ class Date():
       self.month = random.randint(1, 12)
       self.day   = random.randint(1, days_in_month(self.year, self.month))
 
-  def elements(self):
+  def tuple(self):
     """
     Returns a tuple containing the object's year, month and date values.
     """
@@ -166,13 +166,14 @@ def main():
       cycle_century()
     elif choice == "1":
       d = Date(user_input = True)
-      c = color_of_date(d.elements())
+      c = color_of_date(d.tuple())
       print_color_block(c)
     elif choice == "2":
       d = Date(user_input = False)
-      c = color_of_date(d.elements())
+      c = color_of_date(d.tuple())
       print_color_block(c)
-
+      caption = format_tuple_as_str(d.tuple()[::-1], delimiter = "/")
+      print(caption)
 
 if __name__ == '__main__':
   main()
