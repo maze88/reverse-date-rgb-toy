@@ -18,9 +18,12 @@ The origin of the idea came from a trend on social media where you take the numb
 * Function mapping
 * Default and optional function parameters
 * Using terminal dimensions (width/height)
+* Classes
 * While loops (with continue statements)
 * List comprehention
 * Special unicode characters
+* String methods
+* Importing modules
 
 ### Options for improvement:
 * Further input validation for months shorter than 31 days.
