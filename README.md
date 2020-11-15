@@ -1,29 +1,29 @@
 # Reverse date RGB toy
 Welcome to reverse date RGB toy!
 I made this as a coding exercise, because I found it funner to play with Python than with silly trends on social media...
-The origin of the idea came from a trend on social media where you take the numbers of your date of birth and look up their reversed values as RGB values.
+The origin of the idea came from a trend on social media where one is told to look up the reversed values of the numbers of their date of birth as RGB values, in order to get "their color".
 
 ## The ~~silly~~ features:
-* Option in input any specific date.
-* See a randomly selected date.
-* Print all date combinations (all days in past century).
+* Print all date combinations (a whole century).
+* Input any specific date.
+* Check a randomly selected date.
 
 ## Technical stuff
-### Techniques demonstrated:
-* Recursion
-* Exception handling
-* Input validation
-* Colored text
+### Coding techniques demonstrated:
+* Usage of modules
+* String methods
 * Type convertions
 * Function mapping
 * Default and optional function parameters
-* Using terminal dimensions (width/height)
+* Recursion
+* Exception handling
+* Input validation
 * Classes
-* While loops (with continue statements)
+* Use of terminal dimensions (width/height)
+* Colored text
 * List comprehention
 * Special unicode characters
-* String methods
-* Importing modules
+* While loops, with continue statements
 
 ### Options for improvement:
 * Further input validation for months shorter than 31 days.

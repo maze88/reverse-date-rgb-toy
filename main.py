@@ -47,7 +47,7 @@ def format_tuple_as_str(tup, delimiter = ","):
   return str(tup).strip("(").replace(", ", delimiter).strip(")")
 
 
-def input_int_in_range(range_min = 0, range_max = None, prompt = ""):
+def input_int_in_range(range_min = 0, range_max = 0, prompt = ""):
   """
   Recursively request an input of a number between `range_min` and `range_max` (inclusive), with the optional input prompt of `prompt`.
   """
@@ -96,12 +96,12 @@ def cycle_century():
   """
   Cycles through all the days, months and years in a century, printing a line with the corresponding color for each day.
   """
-  for year in range(00, 99):
+  for year in range(1, 100):
     for month in range(1, 13):
       for day in range(1, days_in_month(year, month) + 1):
-        d = (day, month, year)
-        c = color_of_date(d)
-        date_caption = format_tuple_as_str(d, delimiter = "/")
+        d = Date(date_dict = {"year": year, "month": month, "day": day})
+        c = color_of_date(d.tuple())
+        date_caption = format_tuple_as_str(d.tuple(reversed = True), delimiter = "/")
         print(date_caption, end = "")
         print_color_block(c, width = Terminal.width() - len(date_caption), height = 1)
 
@@ -110,11 +110,15 @@ class Date:
   """
   Used for creating Date objects in the script.
   """
-  def __init__(self, user_input = False):
+  def __init__(self, date_dict = None, user_input = False):
     """
     Create a Date object, with random values (by default) or with user input values (if `user_input` is set to True).
     """
-    if user_input:
+    if date_dict:
+      self.year  = date_dict["year"] % 100
+      self.month = date_dict["month"]
+      self.day   = date_dict["day"]
+    elif user_input:
       self.year  = input_int_in_range(0, datetime.datetime.now().year + 1000, "What year (number)? ") % 100
       self.month = input_int_in_range(1, 12, "What month (number)? ")
       self.day   = input_int_in_range(1, days_in_month(self.year, self.month), "What day (number)? ")
@@ -123,11 +127,15 @@ class Date:
       self.month = random.randint(1, 12)
       self.day   = random.randint(1, days_in_month(self.year, self.month))
 
-  def tuple(self):
+  def tuple(self, reversed = False):
     """
     Returns a tuple containing the object's year, month and date values.
     """
-    return (self.year, self.month, self.day)
+    if reversed:
+      r = -1
+    else:
+      r = 1
+    return (self.year, self.month, self.day)[::r]
 
 
 # Initialize variables
@@ -162,11 +170,11 @@ def main():
       sys.exit(0)
     elif choice == "0":
       cycle_century()
-    else:
+    elif choice == "1" or choice == "2":
       d = Date(user_input = choice is "1")
       c = color_of_date(d.tuple())
       print_color_block(c)
-      date_caption = format_tuple_as_str(d.tuple()[::-1], delimiter = "/")
+      date_caption = format_tuple_as_str(d.tuple(reversed = True), delimiter = "/")
       print(date_caption)
 
 if __name__ == '__main__':
