@@ -129,7 +129,7 @@ def date_builder(from_user_input = False):
     month = random.randint(1, 12)
     day   = random.randint(1, days_in_month(year, month))
   elif from_user_input:
-    year  = input_int_in_range(0, datetime.datetime.now().year + 1000, "What year (number)? ") % 100
+    year  = input_int_in_range(1, datetime.datetime.now().year + 1000, "What year (number)? ")
     month = input_int_in_range(1, 12, "What month (number)? ")
     day   = input_int_in_range(1, days_in_month(year, month), "What day (number)? ")
 

@@ -25,6 +25,5 @@ The origin of the idea came from a trend on social media where one is told to lo
 * Special unicode characters
 * While loops, with continue statements
 
-### Options for improvement:
-* Further input validation for months shorter than 31 days.
-* Handle in order of magnitude of number when reversing a numeric string. For example: 100 should become '001', not '1'.
+### Ideas for improvement:
+* Input validation for leap years.
