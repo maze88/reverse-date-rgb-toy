@@ -10,7 +10,7 @@ def days_in_month(year, month):
   """
   Returns the number of days in a month, for a given year (in case of leap-years).
   """
-  return calendar.mdays[month] + calendar.isleap(year)  # second expression is a boolean, `True` is counted as 1.
+  return calendar.mdays[month]  # TODO: consider support for leap years.
 
 
 def reverse_string(x):
@@ -30,26 +30,37 @@ def reverse_string(x):
   return res[::-1]
 
 
-def color_of_date(date_tuple):
+class RGB_Color:
   """
-  Given a `(year, month, day)` tuple, calculates the RGB values for it, based on the silly social media trend.
-  Returns a tuple with the RGB values of the date.
+  Creates an RGB color object with red, green and blue attributes - which are integers between 0-255 (inclusive).
   """
-  year_rs, month_rs, day_rs = map(reverse_string, date_tuple)
-  return tuple(map(int, (year_rs, month_rs, day_rs)))
+  def __init__(self, r, g, b):
+    self.red   = abs(r) % 256
+    self.green = abs(g) % 256
+    self.blue  = abs(b) % 256
+
+def color_of_date(date):
+  """
+  Given a date object, calculates the RGB values for it, based on the "silly" social media trend.
+  Returns an RGB color object for the color of the date.
+  """
+  y_rs, m_rs, d_rs = map(reverse_string, (date.year % 100, date.month, date.day))
+  y_ri, m_ri, d_ri = tuple(map(int, (y_rs, m_rs, d_rs)))
+  return RGB_Color(y_ri, m_ri, d_ri)
 
 
-def format_tuple_as_str(tup, delimiter = ","):
-  """
-  Given a tuple such as `(x, y, z)`, returns a string 'x, y, z'.
-  Passing the optional `delimiter` parameter will replace the [default] commas with another delimiter.
-  """
-  return str(tup).strip("(").replace(", ", delimiter).strip(")")
+def format_date_string(date):
+   """
+   Returns a formatted string from date object.
+   Example string: 'Jan  2 84'
+   """
+   return "{} {}".format(date.ctime()[4:10], date.ctime()[-2:])
 
 
 def input_int_in_range(range_min = 0, range_max = 0, prompt = ""):
   """
-  Recursively request an input of a number between `range_min` and `range_max` (inclusive), with the optional input prompt of `prompt`.
+  Request an input of a number between `range_min` and `range_max` (inclusive), with the optional input prompt of `prompt`.
+  Recursively re-requests input if invalid input is passed.
   """
   i = input(prompt)
   try:
@@ -62,6 +73,9 @@ def input_int_in_range(range_min = 0, range_max = 0, prompt = ""):
 
 
 class Terminal:
+  """
+  A class used to access the dimenstions of the terminal.
+  """
   def width():
     """
     Returns an integer of the terminal's current width.
@@ -75,18 +89,18 @@ class Terminal:
     return os.get_terminal_size()[1]
 
 
-def rgb_text(rgb_values, text):
+def rgb_text(rgb_color, text):
   """
-  For an input iterable `rgb_values`, of length 3, returns a formatted string containing `text`.
+  For an input RGB color object, returns a formatted string containing `text` in the color passed to it.
   """
-  r, g, b = rgb_values
+  r, g, b = rgb_color.red, rgb_color.green, rgb_color.blue
   return "\033[38;2;{};{};{}m{}\033[38;2;255;255;255m".format(r, g, b, text)
 
 
 def print_color_block(rgb_values, width = Terminal.width(), height = Terminal.height()):
   """
-  Given a tuple of RGB values, prints the resulting color all over the terminal.
-  If optional parameters `width` or `height` are passed, it will print a block_char in the appropriate dimensions.
+  Given an RGB object, prints its color all over the terminal.
+  If optional parameters `width` or `height` are passed, it will print a block in the appropriate dimensions.
   """
   for line in range(height):
     print(rgb_text(rgb_values, block_char) * width)
@@ -96,46 +110,30 @@ def cycle_century():
   """
   Cycles through all the days, months and years in a century, printing a line with the corresponding color for each day.
   """
-  for year in range(1, 100):
+  for year in range(1900, 2000):
     for month in range(1, 13):
       for day in range(1, days_in_month(year, month) + 1):
-        d = Date(date_dict = {"year": year, "month": month, "day": day})
-        c = color_of_date(d.tuple())
-        date_caption = format_tuple_as_str(d.tuple(reversed = True), delimiter = "/")
+        d = datetime.date(year, month, day)
+        c = color_of_date(d)
+        date_caption = format_date_string(d)
         print(date_caption, end = "")
         print_color_block(c, width = Terminal.width() - len(date_caption), height = 1)
 
 
-class Date:
+def date_builder(from_user_input = False):
   """
-  Used for creating Date objects in the script.
+  Creats date objects either with user input or random values.
   """
-  def __init__(self, date_dict = None, user_input = False):
-    """
-    Create a Date object, with random values (by default) or with user input values (if `user_input` is set to True).
-    """
-    if date_dict:
-      self.year  = date_dict["year"] % 100
-      self.month = date_dict["month"]
-      self.day   = date_dict["day"]
-    elif user_input:
-      self.year  = input_int_in_range(0, datetime.datetime.now().year + 1000, "What year (number)? ") % 100
-      self.month = input_int_in_range(1, 12, "What month (number)? ")
-      self.day   = input_int_in_range(1, days_in_month(self.year, self.month), "What day (number)? ")
-    else:
-      self.year  = random.randint(0, 99)
-      self.month = random.randint(1, 12)
-      self.day   = random.randint(1, days_in_month(self.year, self.month))
+  if not from_user_input:
+    year  = random.randint(0, 99)
+    month = random.randint(1, 12)
+    day   = random.randint(1, days_in_month(year, month))
+  elif from_user_input:
+    year  = input_int_in_range(0, datetime.datetime.now().year + 1000, "What year (number)? ") % 100
+    month = input_int_in_range(1, 12, "What month (number)? ")
+    day   = input_int_in_range(1, days_in_month(year, month), "What day (number)? ")
 
-  def tuple(self, reversed = False):
-    """
-    Returns a tuple containing the object's year, month and date values.
-    """
-    if reversed:
-      r = -1
-    else:
-      r = 1
-    return (self.year, self.month, self.day)[::r]
+  return datetime.date(year, month, day)
 
 
 # Initialize variables
@@ -171,11 +169,13 @@ def main():
     elif choice == "0":
       cycle_century()
     elif choice == "1" or choice == "2":
-      d = Date(user_input = choice is "1")
-      c = color_of_date(d.tuple())
+      d = date_builder(from_user_input = choice is "1")
+      c = color_of_date(d)
       print_color_block(c)
-      date_caption = format_tuple_as_str(d.tuple(reversed = True), delimiter = "/")
+      date_caption = format_date_string(d)
       print(date_caption)
+    else:
+      pass  # placeholder for new options
 
 if __name__ == '__main__':
   main()
